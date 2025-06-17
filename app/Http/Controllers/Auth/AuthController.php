@@ -33,53 +33,61 @@ class AuthController extends Controller
 
     public function login(Request $request)
     {
+        $ip = $request->ip();
+        $throttleKey = 'login:' . $ip;
+
         // 1. Rate Limiting
-        $attempts = RateLimiter::attempts('login:' . $request->ip(), 5, 60);
+        if (RateLimiter::tooManyAttempts($throttleKey, 5)) {
+            $remainingSeconds = RateLimiter::availableIn($throttleKey);
 
-        // if ($attempts > 5) {
-        //     $seconds = RateLimiter::remaining('login:' . $request->ip(), 5, 60);
-        //     return response()->json(['message' => 'Too many login attempts. Please try again in ' . $seconds . ' seconds.'], 429);
-        // }
-
-        // In your Controller - Add this response to handle the rate limit timer
-        if ($attempts > 5) {
-            $remainingSeconds = RateLimiter::availableIn('login:' . $request->ip()); // This gets the seconds until the lockout is lifted
-
-            return response()->json([
-                'message' => 'Too many login attempts. Please try again in ' . $remainingSeconds . ' seconds.',
-                'remaining_time' => $remainingSeconds // Pass the remaining time
-            ], 429);
+            return $this->responseService->error(
+                'Terlalu banyak percobaan login. Coba lagi dalam ' . $remainingSeconds . ' detik.',
+                429
+            );
         }
 
-        // 2. CSRF Protection (Handled by Laravel)
-
-        $request->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+        // 2. Validasi input
+        $validated = $request->validate([
+            'login' => 'required|string',
+            'password' => 'required|string',
         ]);
 
-        // 3. Authentication Logic
-        $user = User::where('email', $request->email)->first();
+        $loginInput = $validated['login'];
 
+        // 3. Ambil user berdasarkan email atau username
+        $user = User::where('email', $loginInput)
+            ->orWhere('username', $loginInput)
+            ->first();
 
-        if ($user && Hash::check($request->password, $user->password)) {
-            // 4. Session Management
-            Auth::login($user, $request->has('remember'));
+        // 4. Cek apakah user ditemukan dan aktif
+        if ($user) {
+            if ($user->status !== 'active') {
+                return $this->responseService->error(
+                    'Akun Anda tidak aktif. Silakan hubungi administrator.',
+                    403
+                );
+            }
 
-            // 5. Activity Logging (Successful Login)
-            $this->logActivityService->log("User {$user->email} logged in."); // Use the service
+            // 5. Verifikasi password
+            if (Hash::check($validated['password'], $user->password)) {
+                Auth::login($user, $request->boolean('remember'));
+                RateLimiter::clear($throttleKey);
 
-            RateLimiter::clear('login:' . $request->ip());
+                $this->logActivityService->log("User {$user->username} logged in.");
 
-            return response()->json(['message' => 'Login successful', 'redirect' => route('dashboard')], 200);
-        } else {
-            // 6. Failed Login Attempt
-            RateLimiter::hit('login:' . $request->ip());
-            $this->logActivityService->log("Failed login attempt for email: {$request->email} from IP: {$request->ip()}."); // Log the failed attempt
-
-            return response()->json(['message' => 'Invalid credentials.'], 401);
+                return $this->responseService->success([
+                    'redirect' => route('dashboard')
+                ], 'Login berhasil');
+            }
         }
+
+        // 6. Login gagal
+        RateLimiter::hit($throttleKey);
+        $this->logActivityService->log("Gagal login untuk input: {$loginInput} dari IP: {$ip}");
+
+        return $this->responseService->error('Kredensial tidak valid.', 401);
     }
+
 
     public function logout(Request $request)
     {
