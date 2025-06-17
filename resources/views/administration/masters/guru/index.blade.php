@@ -25,10 +25,11 @@
                     <div class="card-header d-sm-flex d-block border-0 pb-0 flex-wrap">
                         <div class="pr-3 me-auto mb-sm-0 mb-3">
                             <h4 class="fs-20 text-black mb-1">List Guru</h4>
-                            <span class="fs-12">Anda bisa memfilter berdasarkan status</span>
+                            <span class="fs-12 text-muted">Kelola data guru, filter status, tambah data baru, dan ekspor
+                                data.</span>
                         </div>
                         <div class="d-flex align-items-center gap-1">
-                            <div class="">
+                            <div>
                                 <select id="filter_status" class="selectpicker form-control wide form-select-md"
                                     data-live-search="false" aria-describedby="instansi-feedback" placeholder="Pilih status"
                                     required>
@@ -37,45 +38,81 @@
                                     <option value="inactive">Tidak aktif</option>
                                 </select>
                             </div>
-                            <a href="{{ route('master.guru.create') }}"
-                                class="btn btn-rounded btn-outline-primary light btn-sm" title="Create">
-                                <i class="las la-plus scale5 me-1"></i>Buat
+                            <div>
+                                <select id="filter_status_guru" class="selectpicker form-control wide form-select-md"
+                                    data-live-search="true" required aria-label="Pilih Status Guru" data-size="5"
+                                    placeholder="Pilih Status Guru">
+                                    <option value="">Semua</option>
+                                    @foreach ($statusGuruList as $singkatan => $singkatan)
+                                        <option value="{{ $singkatan }}">{{ $singkatan }}</option>
+                                    @endforeach
+                                </select>
+                            </div>
+                            <a href="{{ route('master.guru.create') }}" class="btn btn-sm btn-outline-primary"
+                                title="Tambah Guru Baru">
+                                <i class="las la-plus me-1"></i>Tambah
                             </a>
                         </div>
                     </div>
+
+
                     <div class="card-body">
-                        <div class="alert alert-primary">
-                            <strong>Catatan:</strong> <br />
-                            <span>Gunakan fitur ini untuk mengelola data guru dengan efisien. Anda dapat melakukan hal-hal
-                                berikut:</span>
-                            <ul>
-                                <li>Menambah data baru dengan mengisi formulir yang disediakan.</li>
-                            </ul>
+
+                        <!-- Aksi Tambahan -->
+                        <div class="row mb-3 gy-2">
+                            <div class="col-12 col-md d-flex flex-wrap gap-2">
+                                <button class="btn-update-status btn btn-sm btn-primary" data-status="active">
+                                    <i class="las la-check-circle me-1"></i>Aktifkan
+                                </button>
+                                <button class="btn-update-status btn btn-sm btn-danger" data-status="inactive">
+                                    <i class="las la-times-circle me-1"></i>Nonaktifkan
+                                </button>
+                            </div>
+                            <div class="col-12 col-md-auto d-flex flex-wrap gap-2 justify-content-md-end">
+                                <button class="btn btn-sm btn-outline-secondary">
+                                    <i class="las la-file-excel me-1"></i>Import
+                                </button>
+                                <button class="btn btn-sm btn-outline-success">
+                                    <i class="las la-file-excel me-1"></i>Export
+                                </button>
+                            </div>
                         </div>
+
                         <div class="table-responsive">
-                            <table id="example" class="table table-sm  align-middle table-striped gs-0 gy-2 nowrap"
+                            <table id="example" class="table table-sm align-middle table-striped gs-0 gy-2 nowrap"
                                 style="width:100%;">
                                 <thead>
                                     <tr class="text-center text-muted text-uppercase">
-                                        <th class="w-10">
-                                            <input type="checkbox" class="form-check-input" id="selectAll"> *
+                                        <th style="width: 4%;" class="align-middle">
+                                            <span class="d-inline-flex align-items-center gap-1">
+                                                <input type="checkbox" class="form-check-input m-0" id="selectAll" />
+                                                <i class="bi bi-info-circle-fill text-primary" data-bs-toggle="tooltip"
+                                                    title="Pilih beberapa data pada halaman ini untuk melakukan aksi massal."></i>
+                                            </span>
                                         </th>
-                                        <th class="w-10">Actions</th>
-                                        <th class="w-65">Nip</th>
-                                        <th class="w-65">Nama</th>
-                                        <th class="w-65">Jabatan</th>
-                                        <th class="w-65">No. Tlp</th>
-                                        <th class="w-65">Status Guru</th>
-                                        <th class="w-15">Status</th>
+                                        <th style="width: 8%;" class="align-middle">Aksi</th>
+                                        <th style="width: 12%;" class="text-start align-middle">NIP</th>
+                                        <th style="width: 20%;" class="text-start align-middle">Nama</th>
+                                        <th style="width: 15%;" class="text-start align-middle">Jabatan</th>
+                                        <th style="width: 12%;" class="text-start align-middle">No. Tlp</th>
+                                        <th style="width: 12%;" class="text-start align-middle">Status Guru</th>
+                                        <th style="width: 7%;" class="align-middle">Status</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-800 fw-bolder fs-sm-8 fs-lg-6">
+                                    <!-- Data dinamis disini -->
                                 </tbody>
                             </table>
+                        </div>
+
+                        <div class="alert alert-primary mt-3">
+                            <strong>Catatan:</strong> Fitur ini digunakan untuk mengelola data guru. Anda dapat menambahkan,
+                            mengubah, menonaktifkan, atau menghapus data guru sesuai kebutuhan.
                         </div>
                     </div>
                 </div>
             </div>
+
         </div>
     </div>
     <!-- Content body end -->
@@ -102,6 +139,6 @@
     {{-- <script src="{{ asset('templates/assets/plugins/datatables/responsive.bootstrap.min.js') }}"></script> --}}
 
 
-    @include('administration.masters.guru.scripts.list')
-    @include('administration.masters.guru.scripts.action')
+    @include('administration.masters.guru.scripts.datatable-init')
+    @include('administration.masters.guru.scripts.action-handler')
 @endsection

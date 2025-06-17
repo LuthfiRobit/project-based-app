@@ -7,6 +7,7 @@ use App\Models\Guru;
 use App\Services\LogActivityService;
 use App\Services\ResponseService;
 use App\Services\TransactionService;
+use App\Services\UserAccountService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
@@ -15,6 +16,7 @@ class GuruController extends Controller
 {
     protected $responseService;
     protected $transactionService;
+    protected $userAccountService;
 
     /**
      * GuruController constructor.
@@ -22,10 +24,11 @@ class GuruController extends Controller
      * @param ResponseService $responseService
      * @param TransactionService $transactionService
      */
-    public function __construct(ResponseService $responseService, TransactionService $transactionService)
+    public function __construct(ResponseService $responseService, TransactionService $transactionService, UserAccountService $userAccountService)
     {
         $this->responseService = $responseService;
         $this->transactionService = $transactionService;
+        $this->userAccountService = $userAccountService;
     }
 
     /**
@@ -49,6 +52,7 @@ class GuruController extends Controller
     {
         $filters = [
             'filter_status' => $request->input('filter_status', ''),
+            'filter_status_guru' => $request->input('filter_status_guru', ''),
         ];
 
         $query = Guru::getFilters($filters);
@@ -150,7 +154,12 @@ class GuruController extends Controller
             $request,
             new Guru(), // Replace with your Guru model
             $validationRules,
-            null, // Custom logic (optional)
+            // Custom logic (optional)
+            function ($request, $guru) {
+                $user = $this->userAccountService->createGuruAccount($guru, $request->input('status'));
+                $guru->user_id = $user->id_user;
+                $guru->save(); // update kolom user_id
+            },
             $fileFields, // File fields to upload
             $oldFiles // Old files to delete (optional)
         );

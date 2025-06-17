@@ -165,5 +165,5 @@
 @endsection
 
 @section('this-page-scripts')
-    @include('administration.masters.guru.scripts.store')
+    @include('administration.masters.guru.scripts.create-handler')
 @endsection

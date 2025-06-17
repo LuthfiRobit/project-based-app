@@ -3,11 +3,13 @@
 namespace App\Http\Controllers\Master;
 
 use App\Http\Controllers\Controller;
+use App\Imports\JabatanGuruImport;
 use App\Models\JabatanGuru;
 use App\Services\LogActivityService;
 use App\Services\ResponseService;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -91,7 +93,7 @@ class JabatanGuruController extends Controller
     public function store(Request $request)
     {
         $validationRules = [
-            'nama_jabatan' => 'required|string|max:255',
+            'nama_jabatan' => 'required|string|max:255|unique:jabatan_guru,nama_jabatan',
             'deskripsi' => 'required|string',
             'status' => 'required|in:active,inactive',
         ];
@@ -134,7 +136,7 @@ class JabatanGuruController extends Controller
     public function update(Request $request, $id)
     {
         $validationRules = [
-            'nama_jabatan' => 'required|string|max:255',
+            'nama_jabatan' => 'required|string|max:255|unique:jabatan_guru,nama_jabatan,' . $id . ',id_jabatan',
             'deskripsi' => 'required|string',
             'status' => 'required|in:active,inactive',
         ];
@@ -206,5 +208,81 @@ class JabatanGuruController extends Controller
         LogActivityService::log('Updated status for multiple JabatanGuru', 'IDs: ' . json_encode($selectedIds) . ' New Status: ' . $newStatus);
 
         return $this->responseService->success(null, 'Records updated successfully');
+    }
+
+    /**
+     * Import data Jabatan Guru dari file Excel.
+     *
+     * @param \Illuminate\Http\Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function importExcel(Request $request)
+    {
+        // Validasi input file
+        $validateFile = $this->validateData($request->all(), [
+            'file' => 'required|mimes:xlsx,xls'
+        ], [
+            'required' => 'Input :attribute wajib diisi.',
+            'mimes' => 'Input :attribute harus bertipe :values.'
+        ]);
+
+        if ($validateFile !== null) {
+            return $validateFile; // Kembalikan error validasi
+        }
+
+        try {
+            $file = $request->file('file');
+            $import = new JabatanGuruImport(); // Ganti dari SiswaImport ke JabatanGuruImport
+            $import->import($file);
+
+            // Ambil data sukses dan gagal
+            $failures = $import->failures();
+            $successfulRows = $import->successfulRows();
+
+            // Kembalikan response sesuai hasil
+            if ($failures || $successfulRows) {
+                return response()->json([
+                    'success'    => true,
+                    'message'    => 'Impor selesai dengan beberapa hasil.',
+                    'failures'   => $failures,
+                    'successes'  => $successfulRows
+                ], 200);
+            }
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Impor berhasil tanpa kesalahan!'
+            ], 200);
+        } catch (\Exception $e) {
+            Log::error('Import JabatanGuru Excel error: ' . $e->getMessage());
+
+            return response()->json([
+                'success' => false,
+                'message' => 'Impor gagal: ' . $e->getMessage()
+            ], 500);
+        }
+    }
+
+    public function validateData(array $data, array $rules, array $messages = [])
+    {
+        $validator = Validator::make($data, $rules, $messages);
+
+        if ($validator->fails()) {
+            $errors = $validator->errors();
+
+            $response = [
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => []
+            ];
+
+            foreach ($errors->keys() as $key) {
+                $response['errors'][$key] = $errors->get($key);
+            }
+
+            return response()->json($response, 400);
+        }
+
+        return null;
     }
 }

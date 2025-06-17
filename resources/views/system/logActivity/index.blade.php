@@ -19,61 +19,73 @@
                 <h4 class="text-black font-w600">System | Log Aktivitas</h4>
             </div>
 
-            <!-- Section contain -->
+            <!-- Section content -->
             <div class="row">
                 <div class="card">
                     <div class="card-header d-sm-flex d-block border-0 pb-0 flex-wrap">
                         <div class="pr-3 me-auto mb-sm-0 mb-3">
                             <h4 class="fs-20 text-black mb-1">List Log Aktivitas</h4>
-                            <span class="fs-12">Anda bisa memfilter berdasarkan status</span>
+                            <span class="fs-12 text-muted">Kelola data log aktivitas, filter status, dan bersihkan
+                                log.</span>
                         </div>
                         <div class="d-flex align-items-center gap-1">
-                            <div class="">
+                            <div>
                                 <select id="filter_status" class="selectpicker form-control wide form-select-md"
-                                    data-live-search="false" aria-describedby="instansi-feedback" placeholder="Pilih status"
-                                    required>
+                                    data-live-search="false" title="Pilih status" required>
                                     <option value="">Semua</option>
                                     <option value="active">Aktif</option>
-                                    <option value="inactive">Tidak aktif</option>
+                                    <option value="inactive">Tidak Aktif</option>
                                 </select>
                             </div>
-                            <button id="clearLogsBtn" class="btn btn-rounded btn-outline-danger light btn-sm"
-                                title="Clear">
-                                <i class="las la-trash scale5 me-1"></i>Clear Logs
+                            <button id="clearLogsBtn" class="btn btn-sm btn-outline-danger" title="Clear Logs">
+                                <i class="las la-trash me-1"></i>Clear Logs
                             </button>
                         </div>
                     </div>
+
                     <div class="card-body">
-                        <div class="alert alert-primary">
-                            <strong>Catatan:</strong> <br />
-                            <span>Gunakan fitur ini untuk mengelola data aktivitas log dengan efisien. Anda dapat melakukan
-                                hal-hal berikut:</span>
-                            <ul>
-                                <li>Melihat aktivitas yang dilakukan oleh pengguna.</li>
-                                <li>Memfilter berdasarkan status aktivitas.</li>
-                            </ul>
+
+                        <!-- Aksi Tambahan -->
+                        <div class="row mb-3 gy-2">
+                            <div class="col-12 col-md d-flex flex-wrap gap-2">
+                                <button class="btn btn-sm btn-outline-secondary">
+                                    <i class="las la-file-excel me-1"></i>Import
+                                </button>
+                                <button class="btn btn-sm btn-outline-success">
+                                    <i class="las la-file-excel me-1"></i>Export
+                                </button>
+                            </div>
+                            <!-- Untuk log aktivitas, biasanya tidak ada aksi massal aktif/nonaktif -->
                         </div>
+
                         <div class="table-responsive">
                             <table id="example" class="table table-sm align-middle table-striped gs-0 gy-2 nowrap"
                                 style="width:100%;">
                                 <thead>
                                     <tr class="text-center text-muted text-uppercase">
-                                        <th class="w-10">User</th>
-                                        <th class="w-65">Action</th>
-                                        <th class="w-65">Description</th>
-                                        <th class="w-65">IP Address</th>
-                                        <th class="w-65">User Agent</th>
-                                        <th class="w-65">Timestamp</th>
+                                        <th class="w-15">User</th>
+                                        <th class="w-20">Action</th>
+                                        <th class="w-25">Description</th>
+                                        <th class="w-15">IP Address</th>
+                                        <th class="w-15">User Agent</th>
+                                        <th class="w-20">Timestamp</th>
                                     </tr>
                                 </thead>
                                 <tbody class="text-gray-800 fw-bolder fs-sm-8 fs-lg-6">
+                                    <!-- Data dinamis disini -->
                                 </tbody>
                             </table>
+                        </div>
+
+                        <div class="alert alert-primary mt-3">
+                            <strong>Catatan:</strong> Fitur ini digunakan untuk memantau aktivitas pengguna sistem. Gunakan
+                            filter untuk mempermudah pencarian log tertentu.
                         </div>
                     </div>
                 </div>
             </div>
         </div>
+
     </div>
     <!-- Content body end -->
 @endsection

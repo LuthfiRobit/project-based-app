@@ -3,15 +3,12 @@
     <div class="deznav-scroll">
         <!-- Sidebar menu -->
         <ul class="metismenu" id="menu">
-            <!-- Main section -->
+            <!-- Dashboard section -->
             <li>
-                <a class="has-arrow ai-icon" href="javascript:void(0);" aria-expanded="false">
+                <a class="ai-icon" href="{{ route('dashboard') }}">
                     <i class="fas fa-tachometer-alt fw-bold"></i>
-                    <span class="nav-text">Main</span>
+                    <span class="nav-text">Dashboard</span>
                 </a>
-                <ul aria-expanded="false">
-                    <li><a href="{{ route('dashboard') }}" class="fs-6">Dashboard </a></li>
-                </ul>
             </li>
             <!-- Master section -->
             <li>
@@ -39,11 +36,12 @@
             <li>
                 <a class="has-arrow ai-icon" href="javascript:void(0);" aria-expanded="false">
                     <i class="fas fa-users-cog fw-bold"></i>
-                    <span class="nav-text fs-12">Roles & Permissions</span>
+                    <span class="nav-text fs-12">RBAC</span>
                 </a>
                 <ul aria-expanded="false">
                     <li><a href="{{ route('rbac.permission.index') }}" class="fs-6">Permission</a></li>
                     <li><a href="{{ route('rbac.role.index') }}" class="fs-6">Role</a></li>
+                    <li><a href="{{ route('rbac.user.index') }}" class="fs-6">User</a></li>
                 </ul>
             </li>
 

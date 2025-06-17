@@ -16,6 +16,10 @@ return new class extends Migration
             $table->string('nama_jabatan');
             $table->text('deskripsi')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
+
+            $table->unsignedInteger('created_by')->nullable();
+            $table->unsignedInteger('updated_by')->nullable();
+
             $table->timestamps();
         });
     }

@@ -53,6 +53,8 @@ class PermissionController extends Controller
         LogActivityService::log('Fetched Permission list');
 
         return DataTables::of($query)
+            ->addColumn('checkbox', fn($row) => '<input type="checkbox" class="table-checkbox form-check-input" id="checkbox_' . $row->id_permission . '" name="permission_ids[]" value="' . $row->id_permission . '">')
+
             ->addColumn('aksi', function ($item) {
                 return '<div class="btn-group">
                         <button type="button" class="btn btn-outline-primary btn-xs dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -68,7 +70,7 @@ class PermissionController extends Controller
                         </div>
                     </div>';
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['checkbox', 'aksi'])
             ->make(true);
     }
 

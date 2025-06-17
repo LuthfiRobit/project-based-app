@@ -55,59 +55,55 @@
     <!-- Global style start -->
     <link href="{{ asset('templates/administration/vendor/bootstrap-select/dist/css/bootstrap-select.min.css') }}"
         rel="stylesheet" />
-    <!-- Global style end -->
     <link class="main-css" href="{{ asset('templates/administration/css/style.css') }}" rel="stylesheet">
+    <!-- Global style end -->
 
 </head>
 
 <body class="h-100">
-    <div class="login-account">
-        <div class="row h-100">
-            <div class="col-lg-6 align-self-start">
-                <div class="account-info-area"
-                    style="background-color: green !important;
-                    background-image: url({{ asset('templates/administration/images/logo_mi.png') }})">
-                    <div class="login-content">
-                        <p class="sub-title">Masuk ke Aplikasi Pembayaran Iuran</p>
-                        <h1 class="title">Madrasah Ibtidaiyah Ihyauddiniyah</h1>
-                        <p class="text">Aplikasi ini memudahkan proses pembayaran iuran, melacak transaksi keuangan,
-                            dan mengelola administrasi.</p>
-                    </div>
+    <!-- Background Image Container -->
+    <div
+        style="background-image: url({{ asset('templates/administration/images/student-bg.jpg') }}); background-repeat: no-repeat; background-size: cover; min-height: 100vh;">
+        <div class="d-flex justify-content-center align-items-center px-3 px-sm-4"
+            style="min-height: 100vh; backdrop-filter: brightness(0.9);">
+            <div class="login-container p-4 p-md-5 rounded shadow-lg w-100"
+                style="background-color: rgba(255, 255, 255, 0.92); max-width: 420px;">
+                <div class="text-center mb-4">
+                    <h3 class="fw-bold">Selamat Datang Kembali</h3>
+                    <p class="text-muted small">Masukkan email/username dan kata sandi Anda untuk masuk ke sistem.</p>
                 </div>
-            </div>
-            <div class="col-lg-6 col-md-7 col-sm-12 mx-auto align-self-center">
-                <div class="login-form" id="login-form">
-                    <div class="login-head">
-                        <h3 class="title">Selamat Datang Kembali</h3>
-                        <p>Silakan masukkan email dan kata sandi Anda untuk masuk ke dalam sistem.</p>
-                    </div>
-                    <h6 class="login-title"><span>Login</span></h6>
-                    <!-- Timer throttle -->
-                    <div class="alert alert-warning" id="throttle-timer" style="display: none;">
-                        <i class="bi bi-exclamation-triangle-fill me-2" style="font-size: 24px;"></i>
-                        Anda dapat mencoba lagi dalam <strong id="timer"></strong> detik.
-                    </div>
 
-                    <form id="loginForm" action="{{ route('login') }}" method="POST">
-                        @csrf
-                        <div class="mb-4">
-                            <label for="email" class="form-label">Email address</label>
-                            <input type="email" class="form-control" id="email" name="email" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
-                            <input type="password" class="form-control" id="password" name="password" required>
-                        </div>
-                        <div class="form-check">
-                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
-                            <label class="form-check-label" for="remember">Remember me</label>
-                        </div>
-                        <div class="text-center mb-4">
-                            <button type="submit" class="btn btn-primary btn-block">Sign Me In</button>
-                        </div>
-                    </form>
+                <h6 class="text-center mb-3"><span class="border-bottom pb-1">Login</span></h6>
 
+                <!-- Throttle Timer -->
+                <div class="alert alert-warning d-none" id="throttle-timer" role="alert">
+                    <i class="bi bi-exclamation-triangle-fill me-2"></i>
+                    Anda dapat mencoba lagi dalam <strong id="timer"></strong> detik.
                 </div>
+
+                <form id="loginForm" action="{{ route('login') }}" method="POST">
+                    @csrf
+                    <div class="mb-3">
+                        <label for="login" class="form-label">Email atau Username</label>
+                        <input type="text" class="form-control" id="login" name="login"
+                            placeholder="Masukkan email atau username" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Kata Sandi</label>
+                        <input type="password" class="form-control" id="password" name="password"
+                            placeholder="Masukkan kata sandi" required>
+                    </div>
+                    <div class="form-check mb-3">
+                        <input type="checkbox" class="form-check-input" id="remember" name="remember">
+                        <label class="form-check-label" for="remember">Ingat saya</label>
+                    </div>
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-primary" id="submitBtn">Masuk</button>
+                    </div>
+                    <div class="text-center">
+                        <a href="#" class="text-decoration-none text-muted small">Lupa kata sandi?</a>
+                    </div>
+                </form>
             </div>
         </div>
     </div>

@@ -56,7 +56,9 @@
                              <div class="header-info">
                                  @if (Auth::check())
                                      <span class="text-black"><strong>{{ Auth::user()->name }}</strong></span>
-                                     <p class="fs-12 mb-0">{{ ucwords(str_replace('_', ' ', Auth::user()->role)) }}</p>
+                                     <p class="fs-12 mb-0">
+                                         {{ ucwords(str_replace('_', ' ', Auth::user()->roles->first()->role_name ?? '')) }}
+                                     </p>
                                  @else
                                      <span class="text-black">Hello,<strong>Guest</strong></span>
                                      <p class="fs-12 mb-0">Please log in</p>

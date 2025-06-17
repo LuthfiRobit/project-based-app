@@ -170,5 +170,5 @@
 @endsection
 
 @section('this-page-scripts')
-    @include('administration.masters.guru.scripts.update')
+    @include('administration.masters.guru.scripts.edit-handler')
 @endsection
