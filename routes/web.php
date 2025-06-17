@@ -5,70 +5,89 @@ use App\Http\Controllers\Master\GuruController;
 use App\Http\Controllers\Master\JabatanGuruController;
 use App\Http\Controllers\RBAC\PermissionController;
 use App\Http\Controllers\RBAC\RoleController;
+use App\Http\Controllers\RBAC\UserController;
 use App\Http\Controllers\System\LogActivityController;
+use App\Http\Controllers\System\PermissionSyncController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Middleware\CheckPermission;
 
-Route::get('/', function () {
-    return view('welcome');
-});
 
+// Public routes
+Route::get('/', fn() => view('welcome'));
 Route::get('login', [AuthController::class, 'loginView'])->name('login.view');
 Route::post('login', [AuthController::class, 'login'])->name('login');
 Route::post('logout', [AuthController::class, 'logout'])->name('logout');
 
-Route::get('dashboard', function () {
-    return view('administration.dashboard');
-})->name('dashboard')->middleware(['auth', 'checkPermission:dashboard-view']); //view
+// Protected routes (auth + permission check by route name)
+Route::middleware(['auth', 'checkPermission'])->group(function () {
+    Route::get('dashboard', fn() => view('administration.dashboard'))->name('dashboard');
 
-Route::prefix('master')->name('master.')->group(function (): void {
+    // Master
+    Route::prefix('master')->name('master.')->group(function () {
 
-    Route::prefix('jabatan-guru')->name('jabatan-guru.')->group(function (): void {
-        Route::get('/', [JabatanGuruController::class, 'index'])->name('index')->middleware('checkPermission:master-jabatan-guru-index'); //view
-        Route::get('/list', [JabatanGuruController::class, 'list'])->name('list')->middleware('checkPermission:master-jabatan-guru-list'); // json datatable
-        Route::post('/store', [JabatanGuruController::class, 'store'])->name('store')->middleware('checkPermission:master-jabatan-guru-store'); //json
-        Route::get('/show/{id}', [JabatanGuruController::class, 'show'])->name('show')->middleware('checkPermission:master-jabatan-guru-show'); //json
-        Route::put('/update/{id}', [JabatanGuruController::class, 'update'])->name('update')->middleware('checkPermission:master-jabatan-guru-update');
-        Route::post('/update-status-multiple', [JabatanGuruController::class, 'updateStatusMultiple'])->name('update-status-multiple')->middleware('checkPermission:master-jabatan-guru-update-status-multiple'); //json
+        Route::prefix('jabatan-guru')->name('jabatan-guru.')->group(function () {
+            Route::get('/', [JabatanGuruController::class, 'index'])->name('index');
+            Route::get('/list', [JabatanGuruController::class, 'list'])->name('list');
+            Route::post('/store', [JabatanGuruController::class, 'store'])->name('store');
+            Route::get('/show/{id}', [JabatanGuruController::class, 'show'])->name('show');
+            Route::put('/update/{id}', [JabatanGuruController::class, 'update'])->name('update');
+            Route::post('/update-status-multiple', [JabatanGuruController::class, 'updateStatusMultiple'])->name('update-status-multiple');
+            Route::post('/import-excel', [JabatanGuruController::class, 'importExcel'])->name('import-excel');
+        });
+
+        Route::prefix('guru')->name('guru.')->group(function () {
+            Route::get('/', [GuruController::class, 'index'])->name('index');
+            Route::get('/list', [GuruController::class, 'list'])->name('list');
+            Route::get('/create', [GuruController::class, 'create'])->name('create');
+            Route::post('/store', [GuruController::class, 'store'])->name('store');
+            Route::get('/show/{id}', [GuruController::class, 'show'])->name('show');
+            Route::get('/edit/{id}', [GuruController::class, 'edit'])->name('edit');
+            Route::put('/update/{id}', [GuruController::class, 'update'])->name('update');
+        });
     });
 
-    Route::prefix('guru')->name('guru.')->middleware('auth')->group(function (): void {
-        Route::get('/', [GuruController::class, 'index'])->name('index')->middleware('checkPermission:master-guru-index'); //view
-        Route::get('/list', [GuruController::class, 'list'])->name('list')->middleware('checkPermission:master-guru-list'); //json datatable
-        Route::get('/create', [GuruController::class, 'create'])->name('create')->middleware('checkPermission:master-guru-create'); //view
-        Route::post('/store', [GuruController::class, 'store'])->name('store')->middleware('checkPermission:master-guru-store'); //json
-        Route::get('/show/{id}', [GuruController::class, 'show'])->name('show')->middleware('checkPermission:master-guru-show'); //json
-        Route::get('/edit/{id}', [GuruController::class, 'edit'])->name('edit')->middleware('checkPermission:master-guru-edit'); //view
-        Route::put('/update/{id}', [GuruController::class, 'update'])->name('update')->middleware('checkPermission:master-guru-update'); //json
-    });
-});
+    // System
+    Route::prefix('system')->name('system.')->group(function () {
 
-Route::prefix('system')->name('system.')->group(function (): void {
-
-    Route::prefix('log-activity')->name('log-activity.')->group(function (): void {
-        Route::get('/', [LogActivityController::class, 'index'])->name('index')->middleware('checkPermission:system-log-activity-index'); //view
-        Route::get('/list', [LogActivityController::class, 'list'])->name('list')->middleware('checkPermission:system-log-activity-list'); //json
-        Route::delete('/clear', [LogActivityController::class, 'clear'])->name('clear')->middleware('checkPermission:system-log-activity-clear'); //json
-    });
-});
-
-Route::prefix('rbac')->name('rbac.')->group(function (): void {
-
-    Route::prefix('role')->name('role.')->group(function (): void {
-        Route::get('/', [RoleController::class, 'index'])->name('index')->middleware('checkPermission:rbac-role-index'); //view
-        Route::get('/list', [RoleController::class, 'list'])->name('list')->middleware('checkPermission:rbac-role-list'); //json
-        Route::post('/store', [RoleController::class, 'store'])->name('store')->middleware('checkPermission:rbac-role-store'); //json
-        Route::get('/show/{id}', [RoleController::class, 'show'])->name('show')->middleware('checkPermission:rbac-role-show'); //json
-        Route::put('/update/{id}', [RoleController::class, 'update'])->name('update')->middleware('checkPermission:rbac-role-update'); //json
-        Route::get('/list-role-permission/{id}', [RoleController::class, 'listRolePermission'])->name('list-role-permission')->middleware('checkPermission:rbac-role-list-role-permission'); //json
-        Route::post('/store-role-permission/{id}', [RoleController::class, 'storeRolePermission'])->name('store-role-permission')->middleware('checkPermission:rbac-role-store-role-permission');
+        Route::prefix('log-activity')->name('log-activity.')->group(function () {
+            Route::get('/', [LogActivityController::class, 'index'])->name('index');
+            Route::get('/list', [LogActivityController::class, 'list'])->name('list');
+            Route::delete('/clear', [LogActivityController::class, 'clear'])->name('clear');
+        });
     });
 
-    Route::prefix('permission')->name('permission.')->group(function (): void {
-        Route::get('/', [PermissionController::class, 'index'])->name('index')->middleware('checkPermission:rbac-permission-index'); //view
-        Route::get('/list', [PermissionController::class, 'list'])->name('list')->middleware('checkPermission:rbac-permission-list'); //json
-        Route::post('/store', [PermissionController::class, 'store'])->name('store')->middleware('checkPermission:rbac-permission-store'); //json
-        Route::get('/show/{id}', [PermissionController::class, 'show'])->name('show')->middleware('checkPermission:rbac-permission-show'); //json
-        Route::put('/update/{id}', [PermissionController::class, 'update'])->name('update')->middleware('checkPermission:rbac-permission-update'); //json
+    // RBAC
+    Route::prefix('rbac')->name('rbac.')->group(function () {
+
+        Route::prefix('role')->name('role.')->group(function () {
+            Route::get('/', [RoleController::class, 'index'])->name('index');
+            Route::get('/list', [RoleController::class, 'list'])->name('list');
+            Route::post('/store', [RoleController::class, 'store'])->name('store');
+            Route::get('/show/{id}', [RoleController::class, 'show'])->name('show');
+            Route::put('/update/{id}', [RoleController::class, 'update'])->name('update');
+            Route::get('/list-role-permission/{id}', [RoleController::class, 'listRolePermission'])->name('list-role-permission');
+            Route::post('/store-role-permission/{id}', [RoleController::class, 'storeRolePermission'])->name('store-role-permission');
+        });
+
+        Route::prefix('permission')->name('permission.')->group(function () {
+            Route::get('/', [PermissionController::class, 'index'])->name('index');
+            Route::get('/list', [PermissionController::class, 'list'])->name('list');
+            Route::post('/sync', [PermissionSyncController::class, 'sync'])->name('sync');
+            Route::post('/store', [PermissionController::class, 'store'])->name('store');
+            Route::get('/show/{id}', [PermissionController::class, 'show'])->name('show');
+            Route::put('/update/{id}', [PermissionController::class, 'update'])->name('update');
+        });
+
+        Route::prefix('user')->name('user.')->group(function () {
+            Route::get('/', [UserController::class, 'index'])->name('index');
+            Route::get('/list', [UserController::class, 'list'])->name('list');
+            Route::post('/store', [UserController::class, 'store'])->name('store');
+            Route::get('/show/{id}', [UserController::class, 'show'])->name('show');
+            Route::put('/update/{id}', [UserController::class, 'update'])->name('update');
+            Route::post('/update-status', [UserController::class, 'updateStatus'])->name('update-status');
+            Route::post('/update-status-multiple', [UserController::class, 'updateStatusMultiple'])->name('update-status-multiple');
+            Route::get('/list-user-role/{id}', [UserController::class, 'listUserRole'])->name('list-user-role');
+            Route::post('/store-user-role/{id}', [UserController::class, 'storeUserRole'])->name('store-user-role');
+        });
     });
 });
