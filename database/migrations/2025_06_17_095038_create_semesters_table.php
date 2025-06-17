@@ -11,15 +11,17 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jabatan_guru', function (Blueprint $table) {
-            $table->smallIncrements('id_jabatan'); // Primary key dengan tipe SMALLINT
-            $table->string('nama_jabatan');
-            $table->text('deskripsi')->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
+        Schema::create('semester', function (Blueprint $table) {
+            $table->smallIncrements('id_semester');
+
+            $table->unsignedSmallInteger('tahun_pelajaran_id');
+            $table->foreign('tahun_pelajaran_id')->references('id_tahun_pelajaran')->on('tahun_pelajaran')->onDelete('cascade'); // Relasi ke tabel jabatan
+
+            $table->enum('nama_semester', ['ganjil', 'genap']);
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
 
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
-
             $table->timestamps();
         });
     }
@@ -29,6 +31,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jabatan_guru');
+        Schema::dropIfExists('semester');
     }
 };

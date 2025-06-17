@@ -11,16 +11,20 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jabatan_guru', function (Blueprint $table) {
-            $table->smallIncrements('id_jabatan'); // Primary key dengan tipe SMALLINT
-            $table->string('nama_jabatan');
-            $table->text('deskripsi')->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
+        Schema::create('keringanan', function (Blueprint $table) {
+            $table->smallIncrements('id_keringanan'); // Primary Key: smallint
+
+            $table->string('nama_keringanan'); // e.g., "Beasiswa Anak Guru", "Subsidi"
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
 
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
 
             $table->timestamps();
+
+            // Index untuk performa filter
+            $table->index('status');
+            $table->index('nama_keringanan');
         });
     }
 
@@ -29,6 +33,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jabatan_guru');
+        Schema::dropIfExists('keringanan');
     }
 };

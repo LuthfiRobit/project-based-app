@@ -11,11 +11,10 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('jabatan_guru', function (Blueprint $table) {
-            $table->smallIncrements('id_jabatan'); // Primary key dengan tipe SMALLINT
-            $table->string('nama_jabatan');
-            $table->text('deskripsi')->nullable();
-            $table->enum('status', ['active', 'inactive'])->default('active');
+        Schema::create('tahun_pelajaran', function (Blueprint $table) {
+            $table->smallIncrements('id_tahun_pelajaran');
+            $table->string('nama_tahun_pelajaran', 20); // ex: 2025/2026
+            $table->enum('status', ['active', 'inactive'])->default('inactive');
 
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
@@ -29,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('jabatan_guru');
+        Schema::dropIfExists('tahun_pelajaran');
     }
 };

@@ -15,6 +15,8 @@ return new class extends Migration
             $table->increments('id_guru'); // Primary key dengan tipe INT (auto-increment)
             $table->unsignedSmallInteger('jabatan_id'); // Tidak nullable
             $table->foreign('jabatan_id')->references('id_jabatan')->on('jabatan_guru')->onDelete('cascade'); // Relasi ke tabel jabatan
+            $table->unsignedInteger('user_id')->nullable(); // Use unsignedInteger here to match id_user
+            $table->foreign('user_id')->references('id_user')->on('users')->onDelete('set null');
             $table->string('nama_guru');
             $table->string('nip', 15)->nullable();
             $table->text('alamat')->nullable();
@@ -28,6 +30,9 @@ return new class extends Migration
             $table->enum('status_pernikahan', ['Lajang', 'Menikah'])->nullable();
             $table->string('foto')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('active');
+
+            $table->unsignedInteger('created_by')->nullable();
+            $table->unsignedInteger('updated_by')->nullable();
             $table->timestamps();
         });
     }

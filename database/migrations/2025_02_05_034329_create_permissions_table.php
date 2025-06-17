@@ -15,6 +15,7 @@ return new class extends Migration
             $table->smallIncrements('id_permission');
             $table->string('permission_name')->unique(); // More descriptive name
             $table->string('permission_description')->nullable();
+            $table->boolean('is_active')->default(true); // Indicates if the permission is active
             $table->timestamps();
         });
     }
