@@ -54,6 +54,7 @@ class RoleController extends Controller
         LogActivityService::log('Fetched Role list');
 
         return DataTables::of($query)
+            ->addColumn('checkbox', fn($row) => '<input type="checkbox" class="table-checkbox form-check-input" id="checkbox_' . $row->id_role . '" name="role_ids[]" value="' . $row->id_role . '">')
             ->addColumn('aksi', function ($item) {
                 return '<div class="btn-group">
                             <button type="button" class="btn btn-outline-primary btn-xs dropdown-toggle" data-bs-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -72,7 +73,7 @@ class RoleController extends Controller
                             </div>
                         </div>';
             })
-            ->rawColumns(['aksi'])
+            ->rawColumns(['checkbox', 'aksi'])
             ->make(true);
     }
 
