@@ -17,9 +17,30 @@
                     <span class="nav-text">Master</span>
                 </a>
                 <ul aria-expanded="false">
-                    <li><a href="{{ route('master.jabatan-guru.index') }}" class="fs-6">Jabatan Guru </a></li>
+                    <!-- Akademik -->
+                    <li class="nav-label mt-1 text-uppercase small text-muted px-2">Akademik</li>
+                    <li><a href="{{ route('master.sekolah.index') }}" class="fs-6">Sekolah</a></li>
+                    <li><a href="{{ route('master.tahun-pelajaran.index') }}" class="fs-6">Tahun Pelajaran</a></li>
+                    <li><a href="{{ route('master.semester.index') }}" class="fs-6">Semester</a></li>
+                    <li><a href="{{ route('master.tingkat.index') }}" class="fs-6">Tingkat</a></li>
+                    <li><a href="{{ route('master.jurusan.index') }}" class="fs-6">Jurusan</a></li>
+                    <li><a href="{{ route('master.ruang-kelas.index') }}" class="fs-6">Ruang Kelas</a></li>
 
-                    <li><a href="{{ route('master.guru.index') }}" class="fs-6">Guru </a></li>
+                    <!-- SDM -->
+                    <li class="nav-label mt-2 text-uppercase small text-muted px-2">SDM</li>
+                    <li><a href="{{ route('master.jabatan-guru.index') }}" class="fs-6">Jabatan Guru</a></li>
+                    <li><a href="{{ route('master.guru.index') }}" class="fs-6">Guru</a></li>
+
+                    <!-- Siswa -->
+                    <li class="nav-label mt-1 text-uppercase small text-muted px-2">Siswa</li>
+                    <li><a href="#" class="fs-6">PPDB</a></li>
+                    <li><a href="{{ route('master.siswa.index') }}" class="fs-6">Siswa Aktif</a></li>
+                    <li><a href="#" class="fs-6">Kenaikan/Kelulusan</a></li>
+
+                    <!-- Keuangan -->
+                    <li class="nav-label mt-1 text-uppercase small text-muted px-2">Keuangan</li>
+                    <li><a href="{{ route('master.iuran.index') }}" class="fs-6">Iuran</a></li>
+                    <li><a href="{{ route('master.keringanan.index') }}" class="fs-6">Keringanan</a></li>
                 </ul>
             </li>
             <li>
