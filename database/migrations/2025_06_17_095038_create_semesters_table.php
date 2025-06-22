@@ -15,10 +15,10 @@ return new class extends Migration
             $table->smallIncrements('id_semester');
 
             $table->unsignedSmallInteger('tahun_pelajaran_id');
-            $table->foreign('tahun_pelajaran_id')->references('id_tahun_pelajaran')->on('tahun_pelajaran')->onDelete('cascade'); // Relasi ke tabel jabatan
+            $table->foreign('tahun_pelajaran_id')->references('id_tahun_pelajaran')->on('tahun_pelajaran')->onDelete('cascade');
 
-            $table->enum('nama_semester', ['ganjil', 'genap']);
-            $table->enum('status', ['active', 'inactive'])->default('inactive');
+            $table->enum('nama_semester', ['ganjil', 'genap'])->index();
+            $table->enum('status', ['active', 'inactive'])->default('inactive')->index();
 
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();
