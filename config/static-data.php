@@ -24,4 +24,15 @@ return [
         'S2' => 'Magister Strata 2',
         'S3' => 'Doktor Strata 3',
     ],
+
+    // Jenjang Pendidikan
+    'jenjang_pendidikan' => [
+        'SD'  => 'Sekolah Dasar',
+        'MI'  => 'Madrasah Ibtidaiyah',
+        'SMP' => 'Sekolah Menengah Pertama',
+        'MTS' => 'Madrasah Tsanawiyah',
+        'SMA' => 'Sekolah Menengah Atas',
+        'SMK' => 'Sekolah Menengah Kejuruan',
+        'MA'  => 'Madrasah Aliyah',
+    ],
 ];
