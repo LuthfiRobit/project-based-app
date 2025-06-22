@@ -26,7 +26,7 @@
                         </div>
                     </div>
                     <div class="mb-3">
-                        <div class="row">
+                        <div class="row mb-3">
                             <div class="col-12"><span class="fs-6 fw-bold">Permissions</span></div>
                         </div>
                         {{-- <div id="permissions_list" class="row mt-2">
@@ -37,8 +37,9 @@
                                 </div>
                             </div>
                         </div> --}}
-                        <div id="permissions_list" class="row row-gap-1 column-gap-0 justify-content-center">
-                            <!-- Checkbox columns will be injected here -->
+                        <div id="permissions_list" class="accordion row gy-3"
+                            style="max-height: 60vh; overflow-y: auto;">
+                            <!-- Accordion permission groups will be injected here -->
                         </div>
                     </div>
                 </form>

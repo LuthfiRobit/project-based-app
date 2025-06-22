@@ -76,32 +76,31 @@
         const groupClass = `group-${groupKey}`;
 
         const accordionItem = document.createElement('div');
-        accordionItem.classList.add('col');
+        accordionItem.classList.add('col-12'); // Full width on all screen sizes
 
-        accordionItem.innerHTML = `
-            <div class="accordion-item" data-group-key="${prefix}">
-                <h2 class="accordion-header" id="${headerId}">
-                    <button class="accordion-button collapsed" type="button"
-                        data-bs-toggle="collapse" data-bs-target="#${collapseId}"
-                        aria-expanded="false" aria-controls="${collapseId}">
-                        ${prefix}
-                    </button>
-                </h2>
-                <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headerId}">
-                    <div class="accordion-body" data-permission-group="${groupClass}">
-                        <div class="form-check mb-2">
-                            <input class="form-check-input check-all" type="checkbox" id="checkAll-${groupKey}" data-group="${groupClass}">
-                            <label class="form-check-label fw-semibold" for="checkAll-${groupKey}">Centang Semua</label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        `;
+        accordionItem.innerHTML = `<div class="accordion-item border shadow-sm" data-group-key="${prefix}">
+                                    <h2 class="accordion-header" id="${headerId}">
+                                        <button class="accordion-button collapsed fw-bold text-primary" type="button"
+                                            data-bs-toggle="collapse" data-bs-target="#${collapseId}"
+                                            aria-expanded="false" aria-controls="${collapseId}">
+                                            ${prefix}
+                                        </button>
+                                    </h2>
+                                    <div id="${collapseId}" class="accordion-collapse collapse" aria-labelledby="${headerId}">
+                                        <div class="accordion-body" data-permission-group="${groupClass}">
+                                            <div class="form-check form-switch mb-3">
+                                                <input class="form-check-input check-all" type="checkbox" id="checkAll-${groupKey}" data-group="${groupClass}">
+                                                <label class="form-check-label fw-semibold" for="checkAll-${groupKey}">Select All</label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>`;
 
         const accordionBody = accordionItem.querySelector('.accordion-body');
 
         permissionGroup.forEach(permission => {
             const checkboxDiv = createCheckbox(permission, groupClass, rolePermissions);
+            checkboxDiv.classList.add('mb-2'); // space between checkboxes
             accordionBody.appendChild(checkboxDiv);
         });
 
