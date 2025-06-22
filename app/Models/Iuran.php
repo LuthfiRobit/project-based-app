@@ -5,17 +5,18 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 /**
  * Class Iuran
  *
- * Represents a fee/payment record associated with a specific semester.
+ * Represents a fee/payment record associated with a specific tahunPelajaran.
  *
  * @package App\Models
  *
  * @property int $id_iuran Primary key
- * @property int $semester_id Foreign key referencing semester
+ * @property int $tahun_pelajaran_id Foreign key referencing tahun 
  * @property string $nama_iuran Name of the fee
  * @property int $nominal_iuran Amount (e.g., 150000)
  * @property string $status Status: 'active' or 'inactive'
@@ -24,7 +25,7 @@ use Illuminate\Support\Facades\Auth;
  * @property \Illuminate\Support\Carbon|null $created_at
  * @property \Illuminate\Support\Carbon|null $updated_at
  *
- * @property-read \App\Models\Semester $semester
+ * @property-read \App\Models\Semester $tahunPelajaran
  * @property-read \App\Models\User|null $creator
  * @property-read \App\Models\User|null $updater
  *
@@ -41,7 +42,7 @@ class Iuran extends Model
     public $timestamps = true;
 
     protected $fillable = [
-        'semester_id',
+        'tahun_pelajaran_id',
         'nama_iuran',
         'nominal_iuran',
         'status',
@@ -67,11 +68,13 @@ class Iuran extends Model
     }
 
     /**
-     * Get the semester that this fee belongs to.
+     * Get the academic year this tahunPelajaran belongs to.
+     *
+     * @return BelongsTo
      */
-    public function semester(): BelongsTo
+    public function tahunPelajaran(): BelongsTo
     {
-        return $this->belongsTo(Semester::class, 'semester_id', 'id_semester');
+        return $this->belongsTo(TahunPelajaran::class, 'tahun_pelajaran_id', 'id_tahun_pelajaran');
     }
 
     /**
@@ -88,5 +91,38 @@ class Iuran extends Model
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by', 'id_user');
+    }
+
+    /**
+     * Retrieve filtered academic years by status.
+     *
+     * @param array<string, string> $filters
+     * @return Collection
+     */
+    public static function getFilters(array $filters = []): Collection
+    {
+        $query = self::select('id_iuran', 'nama_iuran', 'nominal_iuran', 'tahun_pelajaran.nama_tahun_pelajaran', 'iuran.status')
+            ->leftJoin('tahun_pelajaran', 'iuran.tahun_pelajaran_id', 'tahun_pelajaran.id_tahun_pelajaran')
+            ->orderBy('iuran.created_at', 'DESC');
+
+        if (!empty($filters['filter_status'])) {
+            $query->where('iuran.status', $filters['filter_status']);
+        }
+
+        if (!empty($filters['filter_tahun'])) {
+            $query->where('iuran.tahun_pelajaran_id', $filters['filter_tahun']);
+        }
+
+        return $query->get();
+    }
+
+    public static function getRelationship(int $id): ?self
+    {
+        $query = self::select('id_iuran', 'nama_iuran', 'nominal_iuran', 'tahun_pelajaran.nama_tahun_pelajaran', 'iuran.status')
+            ->leftJoin('tahun_pelajaran', 'iuran.tahun_pelajaran_id', 'tahun_pelajaran.id_tahun_pelajaran')
+            ->where('id_iuran', $id)
+            ->first();
+
+        return $query;
     }
 }

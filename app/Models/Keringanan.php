@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -39,6 +40,7 @@ class Keringanan extends Model
 
     protected $fillable = [
         'nama_keringanan',
+        'deskripsi',
         'status',
     ];
 
@@ -66,5 +68,22 @@ class Keringanan extends Model
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by', 'id_user');
+    }
+
+    /**
+     * Retrieve filtered teacher positions.
+     *
+     * @param array<string, string> $filters
+     * @return Collection
+     */
+    public static function getFilters(array $filters = []): Collection
+    {
+        $query = self::select('id_keringanan', 'nama_keringanan', 'status')->orderBy('created_at', 'DESC');
+
+        if (!empty($filters['filter_status'])) {
+            $query->where('status', $filters['filter_status']);
+        }
+
+        return $query->get();
     }
 }

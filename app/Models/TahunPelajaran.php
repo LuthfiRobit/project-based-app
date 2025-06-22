@@ -94,6 +94,26 @@ class TahunPelajaran extends Model
     }
 
     /**
+     * Get all iuran associated with this academic year.
+     *
+     * @return HasMany
+     */
+    public function iuran(): HasMany
+    {
+        return $this->hasMany(Iuran::class, 'tahun_pelajaran_id', 'id_tahun_pelajaran');
+    }
+
+    /**
+     * Get all ruang kelas associated with this academic year.
+     *
+     * @return HasMany
+     */
+    public function ruangKelas(): HasMany
+    {
+        return $this->hasMany(RuangKelas::class, 'tahun_pelajaran_id', 'id_tahun_pelajaran');
+    }
+
+    /**
      * Get the user who created this academic year.
      *
      * @return BelongsTo

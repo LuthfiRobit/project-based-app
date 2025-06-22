@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\Auth;
 
 /**
@@ -37,9 +38,9 @@ class Semester extends Model
 {
     use HasFactory;
 
-    protected $table = 'semesters';
+    protected $table = 'semester';
 
-    protected $primaryKey = 'id';
+    protected $primaryKey = 'id_semester';
 
     public $timestamps = true;
 
@@ -75,17 +76,7 @@ class Semester extends Model
      */
     public function tahunPelajaran(): BelongsTo
     {
-        return $this->belongsTo(TahunPelajaran::class, 'tahun_pelajaran_id', 'id');
-    }
-
-    /**
-     * Get all of the iuran for the Semester
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function iuran(): HasMany
-    {
-        return $this->hasMany(Iuran::class, 'semester_id', 'id_semester');
+        return $this->belongsTo(TahunPelajaran::class, 'tahun_pelajaran_id', 'id_tahun_pelajaran');
     }
 
     /**
@@ -106,5 +97,34 @@ class Semester extends Model
     public function updater(): BelongsTo
     {
         return $this->belongsTo(User::class, 'updated_by', 'id_user');
+    }
+
+    /**
+     * Retrieve filtered academic years by status.
+     *
+     * @param array<string, string> $filters
+     * @return Collection
+     */
+    public static function getFilters(array $filters = []): Collection
+    {
+        $query = self::select('id_semester', 'nama_semester', 'tahun_pelajaran.nama_tahun_pelajaran', 'semester.status')
+            ->leftJoin('tahun_pelajaran', 'semester.tahun_pelajaran_id', 'tahun_pelajaran.id_tahun_pelajaran')
+            ->orderBy('semester.created_at', 'DESC');
+
+        if (!empty($filters['filter_status'])) {
+            $query->where('status', $filters['filter_status']);
+        }
+
+        return $query->get();
+    }
+
+    public static function getRelationship(int $id): ?self
+    {
+        $query = self::select('id_semester', 'tahun_pelajaran_id', 'nama_semester', 'tahun_pelajaran.nama_tahun_pelajaran', 'semester.status')
+            ->leftJoin('tahun_pelajaran', 'semester.tahun_pelajaran_id', 'tahun_pelajaran.id_tahun_pelajaran')
+            ->where('id_semester', $id)
+            ->first();
+
+        return $query;
     }
 }
