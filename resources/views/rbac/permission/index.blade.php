@@ -14,9 +14,10 @@
     <!-- Content body start -->
     <div class="content-body default-height">
         <div class="container-fluid">
-            <!-- Section heading -->
-            <div class="form-head mb-4 d-flex justify-content-between align-items-center">
-                <h4 class="text-black font-w600">RBAC | Permission Management</h4>
+            <!-- Section Heading -->
+            <div class="form-head mb-4 d-flex align-items-center gap-2">
+                <small class="text-muted">RBAC -</small>
+                <h4 class="text-dark fw-semibold mb-0">Permission Management</h4>
             </div>
 
             <!-- Section content -->
