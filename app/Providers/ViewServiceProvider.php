@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\JabatanGuru;
+use App\Models\TahunPelajaran;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,19 +23,30 @@ class ViewServiceProvider extends ServiceProvider
     public function boot(): void
     {
         // Menambahkan View Composer
-        // Membagikan data jabatan, status guru, dan pendidikan terakhir ke view admin.index, admin.create, dan admin.edit
         View::composer(['administration.masters.guru.*'], function ($view) {
-            // Mengambil data jabatan dan membagikannya ke view
-            $jabatanList = JabatanGuru::getActive(); // Model JabatanGuru dengan method getActive()
-
-            // Mengambil data dari file konfigurasi
+            $jabatanList = JabatanGuru::getActive();
             $statusGuruList = config('static-data.status_guru');
             $pendidikanTerakhirList = config('static-data.pendidikan_terakhir');
-
-            // Membagikan data ke view
             $view->with('jabatanList', $jabatanList)
                 ->with('statusGuruList', $statusGuruList)
                 ->with('pendidikanTerakhirList', $pendidikanTerakhirList);
+        });
+
+        View::composer(['administration.masters.*'], function ($view) {
+            $jenjangPendidikanList = config('static-data.jenjang_pendidikan');
+            $view->with([
+                'jenjangPendidikanList' => $jenjangPendidikanList,
+            ]);
+        });
+
+        View::composer(['administration.masters.semester.*'], function ($view) {
+            $tahunPelajaranList = TahunPelajaran::select('id_tahun_pelajaran', 'nama_tahun_pelajaran')->orderBy('created_at', 'DESC')->get();
+            $view->with('tahunPelajaranList', $tahunPelajaranList);
+        });
+
+        View::composer(['administration.masters.iuran.*'], function ($view) {
+            $tahunPelajaranList = TahunPelajaran::select('id_tahun_pelajaran', 'nama_tahun_pelajaran')->orderBy('created_at', 'DESC')->get();
+            $view->with('tahunPelajaranList', $tahunPelajaranList);
         });
     }
 }
