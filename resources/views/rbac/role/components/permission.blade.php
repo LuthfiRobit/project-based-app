@@ -13,7 +13,7 @@
                         <div class="col-12 mb-2">
                             <div class="row">
                                 <div class="col-6"><span class="fs-6 fw-bold">Nama Role</span></div>
-                                <div class="col-6"><span class="fs-6 fw-bold">:</span> <span id="detail_role_name"
+                                <div class="col-6"><span class="fs-6 fw-bold">:</span> <span id="detail_p_role_name"
                                         class="mb-0"></span></div>
                             </div>
                         </div>
@@ -21,7 +21,7 @@
                             <div class="row">
                                 <div class="col-6"><span class="fs-6 fw-bold">Deskripsi Role</span></div>
                                 <div class="col-6"><span class="fs-6 fw-bold">:</span> <span
-                                        id="detail_role_description" class="mb-0"></span></div>
+                                        id="detail_p_role_description" class="mb-0"></span></div>
                             </div>
                         </div>
                     </div>
@@ -38,7 +38,7 @@
                             </div>
                         </div> --}}
                         <div id="permissions_list" class="accordion row gy-3"
-                            style="max-height: 60vh; overflow-y: auto;">
+                            style="max-height: 50vh; overflow-y: auto;">
                             <!-- Accordion permission groups will be injected here -->
                         </div>
                     </div>

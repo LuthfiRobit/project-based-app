@@ -28,8 +28,9 @@
 
                 // Tampilkan info role
                 document.getElementById('permissionForm').setAttribute('data-id', roleId);
-                document.getElementById('detail_role_name').textContent = role.role_name || 'N/A';
-                document.getElementById('detail_role_description').textContent = role.role_description || 'N/A';
+                document.getElementById('detail_p_role_name').textContent = role.role_name || 'N/A';
+                document.getElementById('detail_p_role_description').textContent = role.role_description ||
+                    'N/A';
 
                 // Buat list permission
                 createCheckboxList(permissions, role_permissions);
