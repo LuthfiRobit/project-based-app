@@ -102,8 +102,9 @@
     <!-- Content body end -->
 
     {{-- Include modals --}}
-    {{-- @include('administration.masters.ruangKelas.components.create') --}}
-    {{-- @include('administration.masters.ruangKelas.components.edit') --}}
+    @include('administration.masters.ruangKelas.components.create')
+    @include('administration.masters.ruangKelas.components.edit')
+    @include('administration.masters.ruangKelas.components.detail')
 @endsection
 
 @section('this-page-scripts')
@@ -112,6 +113,8 @@
     <script src="{{ asset('templates/assets/plugins/datatables/lodash.min.js') }}"></script>
 
     @include('administration.masters.ruangKelas.scripts.datatable-init')
-    {{-- @include('administration.masters.ruangKelas.scripts.modal-create-handler') --}}
-    {{-- @include('administration.masters.ruangKelas.scripts.modal-edit-handler') --}}
+    @include('administration.masters.ruangKelas.scripts.modal-create-handler')
+    @include('administration.masters.ruangKelas.scripts.modal-edit-handler')
+    @include('administration.masters.ruangKelas.scripts.actions-handler')
+    @include('administration.masters.ruangKelas.scripts.status-update-handler')
 @endsection
