@@ -16,6 +16,7 @@ class KeringananSeeder extends Seeder
         DB::table('keringanan')->insert([
             [
                 'nama_keringanan' => 'Beasiswa Anak Guru',
+                'deskripsi' => 'Beasiswa Anak Guru',
                 'status' => 'active',
                 'created_by' => 1,
                 'updated_by' => null,
@@ -24,6 +25,7 @@ class KeringananSeeder extends Seeder
             ],
             [
                 'nama_keringanan' => 'Keringanan Ekonomi',
+                'deskripsi' => 'Keringanan Ekonomi siswa kurang mampu',
                 'status' => 'inactive',
                 'created_by' => 1,
                 'updated_by' => null,

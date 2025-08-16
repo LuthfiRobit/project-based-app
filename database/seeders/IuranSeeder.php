@@ -15,7 +15,7 @@ class IuranSeeder extends Seeder
     {
         DB::table('iuran')->insert([
             [
-                'semester_id' => 1,
+                'tahun_pelajaran_id' => 1,
                 'nama_iuran' => 'SPP Bulanan',
                 'nominal_iuran' => 150000,
                 'status' => 'active',
@@ -25,7 +25,7 @@ class IuranSeeder extends Seeder
                 'updated_at' => now(),
             ],
             [
-                'semester_id' => 1,
+                'tahun_pelajaran_id' => 1,
                 'nama_iuran' => 'Uang Kegiatan',
                 'nominal_iuran' => 50000,
                 'status' => 'inactive',

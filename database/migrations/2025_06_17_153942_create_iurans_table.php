@@ -14,8 +14,8 @@ return new class extends Migration
         Schema::create('iuran', function (Blueprint $table) {
             $table->smallIncrements('id_iuran'); // PRIMARY KEY: smallint auto increment
 
-            $table->unsignedSmallInteger('semester_id'); // FOREIGN KEY ke semester
-            $table->foreign('semester_id')->references('id_semester')->on('semester')->onDelete('cascade');
+            $table->unsignedSmallInteger('tahun_pelajaran_id');
+            $table->foreign('tahun_pelajaran_id')->references('id_tahun_pelajaran')->on('tahun_pelajaran')->onDelete('cascade'); // Relasi ke tabel jabatan
 
             $table->string('nama_iuran'); // Nama iuran: ex. SPP, uang kegiatan
             $table->unsignedInteger('nominal_iuran'); // Nominal: gunakan unsigned untuk nilai positif
@@ -27,7 +27,7 @@ return new class extends Migration
 
             $table->timestamps();
 
-            $table->index('semester_id');
+            $table->index('tahun_pelajaran_id');
             $table->index('status');
             $table->index('nama_iuran');
         });

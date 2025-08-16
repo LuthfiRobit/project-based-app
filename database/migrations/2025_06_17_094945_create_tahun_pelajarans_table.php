@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('tahun_pelajaran', function (Blueprint $table) {
             $table->smallIncrements('id_tahun_pelajaran');
-            $table->string('nama_tahun_pelajaran', 20); // ex: 2025/2026
-            $table->enum('status', ['active', 'inactive'])->default('inactive');
+            $table->string('nama_tahun_pelajaran', 20)->index(); // ex: 2025/2026
+            $table->enum('status', ['active', 'inactive'])->default('inactive')->index();
 
             $table->unsignedInteger('created_by')->nullable();
             $table->unsignedInteger('updated_by')->nullable();

@@ -56,8 +56,13 @@
                              <div class="header-info">
                                  @if (Auth::check())
                                      <span class="text-black"><strong>{{ Auth::user()->name }}</strong></span>
-                                     <p class="fs-12 mb-0">
-                                         {{ ucwords(str_replace('_', ' ', Auth::user()->roles->first()->role_name ?? '')) }}
+                                     <p class="fs-12 mb-0 overflow-auto text-nowrap" style="white-space: nowrap;">
+                                         @foreach (Auth::user()->roles as $index => $role)
+                                             {{ ucwords(str_replace('_', ' ', $role->role_name)) }}
+                                             @if (!$loop->last)
+                                                 |
+                                             @endif
+                                         @endforeach
                                      </p>
                                  @else
                                      <span class="text-black">Hello,<strong>Guest</strong></span>

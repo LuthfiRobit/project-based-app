@@ -12,6 +12,7 @@
         "arcanedev/log-viewer": "^11.0",
         "laravel/framework": "^11.0",
         "laravel/tinker": "^2.9",
+        "maatwebsite/excel": "^3.1",
         "yajra/laravel-datatables": "^11.0"
     },
     "require-dev": {

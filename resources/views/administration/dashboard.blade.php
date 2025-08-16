@@ -15,6 +15,7 @@
             <div class="form-head mb-4 d-flex justify-content-between align-items-center">
                 <h4 class="text-black font-w600">Main | Dashboard</h4>
             </div>
+            <iframe src="{{ route('log-viewer::dashboard') }}" width="100%" height="500px" frameborder="0"></iframe>
 
         </div>
     </div>

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->smallIncrements('id_keringanan'); // Primary Key: smallint
 
             $table->string('nama_keringanan'); // e.g., "Beasiswa Anak Guru", "Subsidi"
+            $table->text('deskripsi')->nullable();
             $table->enum('status', ['active', 'inactive'])->default('inactive');
 
             $table->unsignedInteger('created_by')->nullable();
