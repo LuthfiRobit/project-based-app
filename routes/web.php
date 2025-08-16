@@ -56,11 +56,19 @@ Route::middleware(['auth', 'checkPermission'])->group(function () {
         Route::prefix('jurusan')->name('jurusan.')->group(function () {
             Route::get('/', [JurusanController::class, 'index'])->name('index');
             Route::get('/list', [JurusanController::class, 'list'])->name('list');
+            Route::post('/store', [JurusanController::class, 'store'])->name('store');
+            Route::get('/show/{id}', [JurusanController::class, 'show'])->name('show');
+            Route::put('/update/{id}', [JurusanController::class, 'update'])->name('update');
+            Route::post('/update-status-multiple', [JurusanController::class, 'updateStatusMultiple'])->name('update-status-multiple');
         });
 
         Route::prefix('ruang-kelas')->name('ruang-kelas.')->group(function () {
             Route::get('/', [RuangKelasController::class, 'index'])->name('index');
             Route::get('/list', [RuangKelasController::class, 'list'])->name('list');
+            Route::post('/store', [RuangKelasController::class, 'store'])->name('store');
+            Route::get('/show/{id}', [RuangKelasController::class, 'show'])->name('show');
+            Route::put('/update/{id}', [RuangKelasController::class, 'update'])->name('update');
+            Route::post('/update-status-multiple', [RuangKelasController::class, 'updateStatusMultiple'])->name('update-status-multiple');
         });
 
         Route::prefix('jabatan-guru')->name('jabatan-guru.')->group(function () {
