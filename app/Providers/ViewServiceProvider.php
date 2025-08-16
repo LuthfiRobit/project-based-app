@@ -2,8 +2,11 @@
 
 namespace App\Providers;
 
+use App\Models\Guru;
 use App\Models\JabatanGuru;
+use App\Models\Jurusan;
 use App\Models\TahunPelajaran;
+use App\Models\Tingkat;
 use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
@@ -42,6 +45,17 @@ class ViewServiceProvider extends ServiceProvider
         View::composer(['administration.masters.semester.*'], function ($view) {
             $tahunPelajaranList = TahunPelajaran::select('id_tahun_pelajaran', 'nama_tahun_pelajaran')->orderBy('created_at', 'DESC')->get();
             $view->with('tahunPelajaranList', $tahunPelajaranList);
+        });
+
+        View::composer(['administration.masters.ruangKelas.*'], function ($view) {
+            $tahunPelajaranList = TahunPelajaran::select('id_tahun_pelajaran', 'nama_tahun_pelajaran')->orderBy('created_at', 'DESC')->get();
+            $tingkatList = Tingkat::select('id_tingkat', 'nama_tingkat')->orderBy('created_at', 'DESC')->get();
+            $jurusanList = Jurusan::select('id_jurusan', 'nama_jurusan')->orderBy('created_at', 'DESC')->get();
+            $guruList = Guru::select('id_guru', 'nama_guru')->orderBy('created_at', 'DESC')->get();
+            $view->with('tahunPelajaranList', $tahunPelajaranList)
+                ->with('tingkatList', $tingkatList)
+                ->with('jurusanList', $jurusanList)
+                ->with('guruList', $guruList);
         });
 
         View::composer(['administration.masters.iuran.*'], function ($view) {
