@@ -98,8 +98,9 @@
     <!-- Content body end -->
 
     {{-- Include modals --}}
-    {{-- @include('administration.masters.jurusan.components.create') --}}
-    {{-- @include('administration.masters.jurusan.components.edit') --}}
+    @include('administration.masters.jurusan.components.create')
+    @include('administration.masters.jurusan.components.edit')
+    @include('administration.masters.jurusan.components.detail')
 @endsection
 
 @section('this-page-scripts')
@@ -109,6 +110,8 @@
 
     {{-- Tambahkan script inisialisasi DataTable dan handler modal --}}
     @include('administration.masters.jurusan.scripts.datatable-init')
-    {{-- @include('administration.masters.jurusan.scripts.modal-create-handler') --}}
-    {{-- @include('administration.masters.jurusan.scripts.modal-edit-handler') --}}
+    @include('administration.masters.jurusan.scripts.modal-create-handler')
+    @include('administration.masters.jurusan.scripts.modal-edit-handler')
+    @include('administration.masters.jurusan.scripts.actions-handler')
+    @include('administration.masters.jurusan.scripts.status-update-handler')
 @endsection
