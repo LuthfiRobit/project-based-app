@@ -203,7 +203,7 @@ class TingkatController extends Controller
         $validator = Validator::make($request->all(), $validationRules);
 
         if ($validator->fails()) {
-            LogActivityService::log('Validation failed during update status for multiple Tingkat', 'Errors: ' . json_encode($validator->errors()));
+            $this->logActivityService->log('Validation failed during update status for multiple Tingkat', 'Errors: ' . json_encode($validator->errors()));
             return $this->responseService->validationError($validator->errors());
         }
 
@@ -214,7 +214,7 @@ class TingkatController extends Controller
         $tingkatRecords = Tingkat::whereIn('id_tingkat', $selectedIds)->get();
 
         if ($tingkatRecords->isEmpty()) {
-            LogActivityService::log('No Tingkat records found for status update', 'IDs: ' . json_encode($selectedIds));
+            $this->logActivityService->log('No Tingkat records found for status update', 'IDs: ' . json_encode($selectedIds));
             return $this->responseService->error('Data not found', ResponseService::STATUS_NOT_FOUND);
         }
 
@@ -224,7 +224,7 @@ class TingkatController extends Controller
             $this->transactionService->update($request, $tingkat, $validationRules);
         }
 
-        LogActivityService::log('Updated status for multiple Tingkat', 'IDs: ' . json_encode($selectedIds) . ' New Status: ' . $newStatus);
+        $this->logActivityService->log('Updated status for multiple Tingkat', 'IDs: ' . json_encode($selectedIds) . ' New Status: ' . $newStatus);
 
         return $this->responseService->success(null, 'Records updated successfully');
     }
