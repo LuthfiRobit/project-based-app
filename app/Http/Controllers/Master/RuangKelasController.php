@@ -8,6 +8,8 @@ use App\Services\LogActivityService;
 use App\Services\ResponseService;
 use App\Services\TransactionService;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class RuangKelasController extends Controller
@@ -83,5 +85,163 @@ class RuangKelasController extends Controller
             })
             ->rawColumns(['checkbox', 'aksi', 'status'])
             ->make(true);
+    }
+
+    /**
+     * Store a new RuangKelas record in the database.
+     *
+     * @param Request $request
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function store(Request $request)
+    {
+        $validationRules = [
+            'tahun_pelajaran_id' => 'required|exists:tahun_pelajaran,id_tahun_pelajaran',
+            'tingkat_id'         => 'required|exists:tingkat,id_tingkat',
+            'jurusan_id'         => 'nullable|exists:jurusan,id_jurusan',
+            'nama_ruang_kelas'   => [
+                'required',
+                'string',
+                'max:20',
+                // Validasi kombinasi unik
+                Rule::unique('ruang_kelas', 'nama_ruang_kelas')->where(function ($query) use ($request) {
+                    return $query->where('tahun_pelajaran_id', $request->tahun_pelajaran_id)
+                        ->where('tingkat_id', $request->tingkat_id)
+                        ->where('jurusan_id', $request->jurusan_id);
+                }),
+            ],
+            'wali_kelas_id'      => 'nullable|exists:guru,id_guru',
+            'status'             => 'required|in:active,inactive',
+        ];
+
+        // Validate the request input
+        $validator = Validator::make($request->all(), $validationRules);
+
+        if ($validator->fails()) {
+            $this->logActivityService->log('Validation failed during RuangKelas store', 'Errors: ' . json_encode($validator->errors()));
+            return $this->responseService->validationError($validator->errors());
+        }
+
+        // Use TransactionService to store the RuangKelas
+        $result = $this->transactionService->store($request, new RuangKelas(), $validationRules);
+
+        $this->logActivityService->log('Stored new RuangKelas', 'Data: ' . json_encode($request->all()));
+
+        return $result;
+    }
+
+    /**
+     * Display the details of a specific RuangKelas by ID.
+     *
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function show($id)
+    {
+        // Find the Ruang Kelas record by ID
+        $guru = RuangKelas::getRelationship($id);
+        if (!$guru) {
+            return $this->responseService->error('Data not found', ResponseService::STATUS_NOT_FOUND);
+        }
+        $this->logActivityService->log('Viewed RuangKelas detail', 'ID: ' . $id);
+        return $this->responseService->success($guru);
+    }
+
+    /**
+     * Update an existing RuangKelas record.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function update(Request $request, $id)
+    {
+        $ruangKelas = RuangKelas::find($id);
+
+        if (!$ruangKelas) {
+            $this->logActivityService->log('RuangKelas not found for update', 'ID: ' . $id);
+            return $this->responseService->error('Data not found', ResponseService::STATUS_NOT_FOUND);
+        }
+
+        $validationRules = [
+            'tahun_pelajaran_id' => 'required|exists:tahun_pelajaran,id_tahun_pelajaran',
+            'tingkat_id'         => 'required|exists:tingkat,id_tingkat',
+            'jurusan_id'         => 'nullable|exists:jurusan,id_jurusan',
+            'nama_ruang_kelas'   => [
+                'required',
+                'string',
+                'max:20',
+                // Validasi unik nama ruang dalam konteks (tahun_pelajaran + tingkat + jurusan), tapi abaikan jika milik record yang sedang diupdate
+                Rule::unique('ruang_kelas', 'nama_ruang_kelas')
+                    ->where(function ($query) use ($request) {
+                        return $query->where('tahun_pelajaran_id', $request->tahun_pelajaran_id)
+                            ->where('tingkat_id', $request->tingkat_id)
+                            ->where('jurusan_id', $request->jurusan_id);
+                    })
+                    ->ignore($id, 'id_ruang_kelas'),
+            ],
+            'wali_kelas_id'      => 'nullable|exists:guru,id_guru',
+            'status'             => 'required|in:active,inactive',
+        ];
+
+        // Validate the request data
+        $validator = Validator::make($request->all(), $validationRules);
+
+        if ($validator->fails()) {
+            $this->logActivityService->log('Validation failed during RuangKelas update', 'Errors: ' . json_encode($validator->errors()));
+            return $this->responseService->validationError($validator->errors());
+        }
+
+        // Use TransactionService to update the record
+        $result = $this->transactionService->update($request, $ruangKelas, $validationRules);
+
+        $this->logActivityService->log('Updated RuangKelas', 'ID: ' . $id . ' Data: ' . json_encode($request->all()));
+
+        return $result;
+    }
+
+    /**
+     * Update status multiple an existing RuangKelas record.
+     *
+     * @param Request $request
+     * @param int $id
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function updateStatusMultiple(Request $request)
+    {
+        $validationRules = [
+            'ids' => 'required|array|min:1',
+            'ids.*' => 'exists:ruang_kelas,id_ruang_kelas',
+            'status' => 'required|in:active,inactive',
+        ];
+
+        // Validate the request data
+        $validator = Validator::make($request->all(), $validationRules);
+
+        if ($validator->fails()) {
+            $this->logActivityService->log('Validation failed during update status for multiple RuangKelas', 'Errors: ' . json_encode($validator->errors()));
+            return $this->responseService->validationError($validator->errors());
+        }
+
+        $selectedIds = $request->input('ids');
+        $newStatus = $request->input('status');
+
+        // Find the RuangKelas records by IDs
+        $ruangKelasRecords = RuangKelas::whereIn('id_ruang_kelas', $selectedIds)->get();
+
+        if ($ruangKelasRecords->isEmpty()) {
+            $this->logActivityService->log('No RuangKelas records found for status update', 'IDs: ' . json_encode($selectedIds));
+            return $this->responseService->error('Data not found', ResponseService::STATUS_NOT_FOUND);
+        }
+
+        // Use TransactionService to update each record
+        foreach ($ruangKelasRecords as $ruangKelas) {
+            $request->merge(['status' => $newStatus]);
+            $this->transactionService->update($request, $ruangKelas, $validationRules);
+        }
+
+        $this->logActivityService->log('Updated status for multiple RuangKelas', 'IDs: ' . json_encode($selectedIds) . ' New Status: ' . $newStatus);
+
+        return $this->responseService->success(null, 'Records updated successfully');
     }
 }
